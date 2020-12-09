@@ -13,8 +13,8 @@ on your linux server where your owncloud installation is installed.
 
 ## Why?
 
-An owncloud installation can contain a lot of files, especially if you are using server-side encryption. If you try to
-make a remote backup via FTPS/SFTP your download-speed will be low because your FTP-Client tries to download those many
+An owncloud installation can contain a lot of small files, especially if you are using server-side encryption. If you try to
+make a remote backup via FTPS/SFTP your download-speed will be low because your FTP-Client tries to download those many, small
 files. It's better to download bigger files, e.g. of size 1GB.
 
 ## One example scenario
