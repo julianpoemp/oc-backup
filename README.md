@@ -28,7 +28,7 @@ download a lot of small files.
 
 1. You need enough disk space on your server (min. twice the size of your owncloud directory).
 2. Make sure that your webserver's operating system is Linux.
-3. You need SSH access to the webserver where owncloud is installed in order to run this script.
+3. You need SSH access to the webserver where owncloud is installed in order to run this script. [What if I do not have SSH access?](#what-if-i-do-not-have-access-to-my-webserver)
 4. Make sure that the commands `zip` and `mysqldump` exist.
 
 ## Example config file
@@ -37,3 +37,20 @@ Assuming your data directory and your owncloud directory are in the same folder 
 domainPath=/path/to/myowncloud.com
 configPath=/path/to/myowncloud.com/owncloud/config/config.php
 ````
+
+## What if I do not have SSH access to my webserver?
+
+In that case there are two options:
+
+1) If you are not using server-side encryption you could try to [make a backup without SSH access](#making-a-backup-without-ssh-access).
+2) If you are using server-side encryption you have a lot of small files for sure. In that way I recommend you to get SSH access. If you don't want to, you could try making a backup manually, but the download speed will be very very slow and the backup will take a lot of more time.
+
+## Making a backup without SSH access
+
+1. Enable the maintenance mode in your config.php of your owncloud installation.
+2. Export your SQL database and save it on your computer.
+3. Use a FTP-Client and connect to your server.
+4. Download your owncloud directory next to your SQL backup file.
+5. After the download has finished disable maintenance mode.
+
+As an alternative to a standard FTP-Client you could use my [webspace-backup](https://github.com/julianpoemp/webspace-backup) application.
