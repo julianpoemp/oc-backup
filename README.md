@@ -3,12 +3,12 @@
 **! IN DEVELOPMENT, DO NOT USE IT UNTIL TESTED !**
 
 This Script alllows to create a backup of the whole owncloud installation and its SQL Database. You can run this script
-on your linux server where your owncloud installation is installed. Please read the [Requirements](https://github.com/julianpoemp/oc-backup#requirements) before using this script.
+on your linux server where your owncloud installation is installed. In my case this scripts saves me a lot of time: During the backup my owncloud installation is unavailable for just 2 hours instead of days (I'm using encryption and I have a lot of small files to download). Please read the [Requirements](https://github.com/julianpoemp/oc-backup#requirements) before using this script.
 
 ## Features:
 
 - Backup of owncloud installation to 1 GB zip parts => better download speed.
-- Backup of owncloud SQL database
+- Backup of owncloud SQL database next to the data backup
 - Automatically enable maintenance mode while backup
 
 ## Why?
@@ -31,7 +31,7 @@ download a lot of small files.
 3. You need SSH access to the webserver where owncloud is installed in order to run this script.
 4. Make sure that the commands `zip` and `mysqldump` exist.
 
-## Examplle config file
+## Example config file
 Assuming your data directory and your owncloud directory are in the same folder called "myowncloud.com":
 ````
 domainPath=/path/to/myowncloud.com
