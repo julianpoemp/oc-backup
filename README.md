@@ -26,9 +26,10 @@ download a lot of small files.
 
 ## Requirements
 
-1. Make sure that your webserver's operating system is Linux.
-2. You need SSH access to the webserver where owncloud is installed in order to run this script.
-3. You need enough disk space on your server (min. twice the size of your owncloud directory).
+1. You need enough disk space on your server (min. twice the size of your owncloud directory).
+2. Make sure that your webserver's operating system is Linux.
+3. You need SSH access to the webserver where owncloud is installed in order to run this script.
+4. Make sure that the commands `zip` and `mysqldump` exist.
 
 ## Examplle config file
 Assuming your data directory and your owncloud directory are in the same folder called "myowncloud.com":
