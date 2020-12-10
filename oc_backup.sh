@@ -3,7 +3,8 @@
 # Description: Creates a backup of the whole owncloud installation incl. SQL database.
 # Author: Julian Poemp
 # Version: 1.0.0
-# Check for updates:
+# LICENSE: MIT
+# Check for updates: https://github.com/julianpoemp/oc-backup
 
 SECONDS=0
 
