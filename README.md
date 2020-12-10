@@ -3,7 +3,7 @@
 **! IN DEVELOPMENT, DO NOT USE IT UNTIL TESTED !**
 
 This Script alllows to create a backup of the whole owncloud installation and its SQL Database. You can run this script
-on your linux server where your owncloud installation is installed.
+on your linux server where your owncloud installation is installed. Please read the [Requirements](https://github.com/julianpoemp/oc-backup#requirements) before using this script.
 
 ## Features:
 
