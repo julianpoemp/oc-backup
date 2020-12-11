@@ -17,15 +17,85 @@ OC_DB_PASSWORD=""
 BACKUP_DESTINATION=""
 SHOW_ERRORS_ONLY=false
 
-doesZipExist=false
-doesSQLDumpExist=false
+cmd_zip_exists=false
+cmd_sqldump_exists=false
+missing_constants=""
+is_config_valid=false
 
 source ./oc_backup.cfg
 
-# functions
+# FUNCTIONS
+
 function log {
   if [ "${SHOW_ERRORS_ONLY}" != true ] ; then
     echo "${1}"
+  fi
+}
+
+function check_available_commands {
+  if type "zip" &> /dev/null; then
+    cmd_zip_exists=true
+  else
+    cmd_zip_exists=false
+  fi
+
+  if type "mysqldump" &> /dev/null; then
+    cmd_sqldump_exists=true
+  else
+    cmd_sqldump_exists=true
+  fi
+}
+
+function check_config {
+  if [ "${OC_INSTALLATION_PATH}" = "" ] ; then
+    missing_constants="OC_INSTALLATION_PATH, "
+  fi
+
+  if [ "${OC_DATA_PATH}" = "" ] ; then
+      missing_constants="${missing_constants}OC_DATA_PATH, "
+  fi
+
+  if [ "${OC_DB_NAME}" = "" ] ; then
+      missing_constants="${missing_constants}OC_DB_NAME, "
+  fi
+
+  if [ "${OC_DB_USER}" = "" ] ; then
+      missing_constants="${missing_constants}OC_DB_USER, "
+  fi
+
+  if [ "${OC_DB_PASSWORD}" = "" ] ; then
+      missing_constants="${missing_constants}OC_DB_PASSWORD, "
+  fi
+
+  if [ "${BACKUP_DESTINATION}" = "" ] ; then
+      missing_constants="${missing_constants}BACKUP_DESTINATION"
+  fi
+
+  if [ "${missing_constants}" = "" ] ; then
+    is_config_valid=true
+  else
+    is_config_valid=false
+  fi
+}
+
+function enable_maintenance_mode {
+  log "-> Enable maintenance mode..."
+  configFile="${configFile//\'maintenance\' => false/\'maintenance\' => true}"
+  echo "${configFile}" > "${configPath}"
+}
+
+function disable_maintenance_mode {
+  log "-> Disbale maintenance mode..."
+  configFile="${configFile//\'maintenance\' => true/\'maintenance\' => false}"
+  echo "${configFile}" > "${configPath}"
+}
+
+function create_zip_backup {
+  log "-> Create zip archive of owncloud files..."
+  if [ "${SHOW_ERRORS_ONLY}" != true ] ; then
+    zip -r -s 1000m "${BACKUP_DESTINATION}/${timeNow}_owncloud.zip" "${OC_INSTALLATION_PATH}" "${OC_DATA_PATH}"
+  else
+    zip -r -s 1000m "${BACKUP_DESTINATION}/${timeNow}_owncloud.zip" "${OC_INSTALLATION_PATH}" "${OC_DATA_PATH}" &> /dev/null
   fi
 }
 
@@ -40,9 +110,7 @@ function doBackup {
   log "-> Read owncloud configuration file..."
   configFile=$(<"${configPath}")
 
-  log "-> Set maintenance mode..."
-  configFile="${configFile//\'maintenance\' => false/'maintenance' => true}"
-  echo "${configFile}" > "${configPath}"
+  enable_maintenance_mode
 
   log "-> Create backup folder"
   mkdir "${BACKUP_DESTINATION}" &> /dev/null
@@ -50,47 +118,36 @@ function doBackup {
   log "-> Create database backup..."
   (mysqldump -u "${OC_DB_USER}" -p"${OC_DB_PASSWORD}" "${OC_DB_NAME}" > "${BACKUP_DESTINATION}/${timeNow}_owncloud.sql") &> /dev/null
 
-  log "-> Create zip archive of owncloud files..."
-  if [ "${SHOW_ERRORS_ONLY}" != true ] ; then
-    zip -r -s 1000m "${BACKUP_DESTINATION}/${timeNow}_owncloud.zip" "${OC_INSTALLATION_PATH}" "${OC_DATA_PATH}"
-  else
-    zip -r -s 1000m "${BACKUP_DESTINATION}/${timeNow}_owncloud.zip" "${OC_INSTALLATION_PATH}" "${OC_DATA_PATH}" &> /dev/null
-  fi
+  create_zip_backup
 
-  log "-> Deactivate maintenance mode..."
-  configFile="${configFile//\'maintenance\' => true/'maintenance' => false}"
-  echo "${configFile}" > "${configPath}"
+  disable_maintenance_mode
+
   duration=$SECONDS
   log "-> Finished after $(($duration / 60)) minutes."
 }
-# functions end
+# FUNCTIONS END
 
 log "Start oc-backup v1.0.0..."
 
-if type "zip" &> /dev/null; then
-  doesZipExist=true
-else
-  doesZipExist=false
-fi
+check_available_commands
+check_config
 
-if type "mysqldump" &> /dev/null; then
-  doesSQLDumpExist=true
-else
-  doesSQLDumpExist=false
-fi
+if [ "${cmd_zip_exists}" = true ] && [ "${cmd_sqldump_exists}" = true ] ; then
 
-
-if [ "${doesZipExist}" = true ] && [ "${doesSQLDumpExist}" = true ] ; then
-  doBackup
+  if [ "${is_config_valid}" = true ] ; then
+    doBackup
+  else
+    echo "OC Backup Error: Invalid config file. Missing constants: ${missing_constants}."
+  fi
 else
   output="OC Backup Error: can not start backup, because of missing commands ("
 
-  if [ "${doesZipExist}" != true ] ; then
+  if [ "${cmd_zip_exists}" != true ] ; then
     output="${output}zip"
   fi
 
-  if [ "${doesSQLDumpExist}" != true ] ; then
-    if [ "${doesZipExist}" != true ] ; then
+  if [ "${cmd_sqldump_exists}" != true ] ; then
+    if [ "${cmd_zip_exists}" != true ] ; then
       output="${output}, "
     fi
 
