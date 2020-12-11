@@ -50,6 +50,12 @@ BACKUP_PATH=/path/to/backup
 SHOW_ERRORS_ONLY=false
 ````
 
+## Tested on production servers
+
+- [www.all-inkl.com](https://all-inkl.com/PA308D2013F2745)\1 : This is my webspace provider. I tested the script on a SSH server from that company.
+
+\1 Affiliate Link. If you buy a product I'll get a small commission :)
+
 ## What if I do not have SSH access to my webserver?
 
 In that case there are two options:
