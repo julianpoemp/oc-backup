@@ -31,11 +31,23 @@ download a lot of small files.
 3. You need SSH access to the webserver where owncloud is installed in order to run this script. [What if I do not have SSH access?](#what-if-i-do-not-have-access-to-my-webserver)
 4. Make sure that the commands `zip` and `mysqldump` exist.
 
+## How to make an owncloud backup
+
+1. Upload the oc_backup.sh script and the oc_backup.cfg to your webserver, next to the owncloud installation folder.
+2. Change the oc_backup.cfg file with the data of your owncloud installation. See [config example](#example-config-file).
+3. To start the backup run `sh ./oc_backup.sh`. While it is running your owncloud is in maintenance mode.
+4. After the backup you can download the backup to your computer.
+
 ## Example config file
 Assuming your data directory and your owncloud directory are in the same folder called "myowncloud.com":
 ````
-domainPath=/path/to/myowncloud.com
-configPath=/path/to/myowncloud.com/owncloud/config/config.php
+OC_INSTALLATION_PATH=/path/to/myowncloud.com/owncloud
+OC_DATA_PATH=/path/to/myowncloud.com/data
+OC_DB_NAME=owncloud
+OC_DB_USER=user
+OC_DB_PASSWORD=password
+BACKUP_PATH=/path/to/backup
+SHOW_ERRORS_ONLY=false
 ````
 
 ## What if I do not have SSH access to my webserver?

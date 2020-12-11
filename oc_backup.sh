@@ -14,7 +14,6 @@ OC_DATA_PATH=""
 OC_DB_NAME=""
 OC_DB_USER=""
 OC_DB_PASSWORD=""
-OC_DB_HOST=""
 BACKUP_DESTINATION=""
 SHOW_ERRORS_ONLY=false
 
@@ -33,31 +32,34 @@ function log {
 function doBackup {
   configPath="${OC_INSTALLATION_PATH}/config/config.php"
 
-  log "OC_INSTALLATION_PATH is: ${OC_INSTALLATION_PATH}"
-  log "OC_DATA_PATH is: ${OC_DATA_PATH}"
-  log "configPath is: ${configPath}"
-
   timeNow=$(date "+%Y-%m-%d_%H-%M-%S")
 
   log "-> Backup owncloud configuration file..."
-  # cp "${configPath}" "${configPath}.back"
+  cp "${configPath}" "${configPath}.back"
 
   log "-> Read owncloud configuration file..."
-  # configFile=$(<"${configPath}")
+  configFile=$(<"${configPath}")
 
   log "-> Set maintenance mode..."
-  # configFile=$(echo "${configFile}" | sed -e "s/\('maintenance' =>\) false\(,\)/\1 true\2/g")
-  log "${configFile}" > "${configPath}.new"
+  configFile="${configFile//\'maintenance\' => false/'maintenance' => true}"
+  echo "${configFile}" > "${configPath}"
+
+  log "-> Create backup folder"
+  mkdir "${BACKUP_DESTINATION}" &> /dev/null
 
   log "-> Create database backup..."
-  # mysqldump -u "${OC_DB_USER}" -p"${OC_DB_HOST}" "${OC_DB_NAME}" > "${BACKUP_DESTINATION}/${timeNow}_ocsp.sql"
+  (mysqldump -u "${OC_DB_USER}" -p"${OC_DB_PASSWORD}" "${OC_DB_NAME}" > "${BACKUP_DESTINATION}/${timeNow}_owncloud.sql") &> /dev/null
 
   log "-> Create zip archive of owncloud files..."
-  # zip -r -s 1000m "${BACKUP_DESTINATION}/${timeNow}_owncloud.zip" "${OC_INSTALLATION_PATH}" "${OC_DATA_PATH}"
+  if [ "${SHOW_ERRORS_ONLY}" != true ] ; then
+    zip -r -s 1000m "${BACKUP_DESTINATION}/${timeNow}_owncloud.zip" "${OC_INSTALLATION_PATH}" "${OC_DATA_PATH}"
+  else
+    zip -r -s 1000m "${BACKUP_DESTINATION}/${timeNow}_owncloud.zip" "${OC_INSTALLATION_PATH}" "${OC_DATA_PATH}" &> /dev/null
+  fi
 
   log "-> Deactivate maintenance mode..."
-  # configFile=$(echo "${configFile}" | sed -e "s/\('maintenance' =>\) true\(,\)/\1 false\2/g")
-  # echo "${configFile}" > ${configPath}
+  configFile="${configFile//\'maintenance\' => true/'maintenance' => false}"
+  echo "${configFile}" > "${configPath}"
   duration=$SECONDS
   log "-> Finished after $(($duration / 60)) minutes."
 }
