@@ -26,7 +26,7 @@ It's just a shell script. It enables the maintenance mode, makes a backup of the
 
 ## Requirements
 
-1. You need enough disk space on your server (min. twice the size of your owncloud directory).
+1. You need enough disk space on the destination of the backup (min. the size of your owncloud directory).
 2. Make sure that your webserver's operating system is Linux.
 3. You need SSH access to the webserver where owncloud is installed in order to run this script. [What if I do not have SSH access?](#what-if-i-do-not-have-access-to-my-webserver)
 4. Make sure that the commands `zip` and `mysqldump` exist.
