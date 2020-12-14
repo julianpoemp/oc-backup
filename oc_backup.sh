@@ -6,7 +6,9 @@
 # LICENSE: MIT
 # Check for updates: https://github.com/julianpoemp/oc-backup
 
+OCB_VERSION="1.0.0"
 SECONDS=0
+CONF_PATH="./oc_backup.cfg"
 
 # constants ot configuration file
 OC_INSTALLATION_PATH=""
@@ -21,11 +23,35 @@ cmd_zip_exists=false
 cmd_sqldump_exists=false
 missing_constants=""
 is_config_valid=false
+show_help=false
 
-source ./oc_backup.cfg
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -c|--conf)
+    CONF_PATH="$2"
+    shift # past argument
+    shift # past value
+    ;;
+    -h|--help)
+    show_help=true
+    shift # past argument
+    shift # past value
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}"
+
+source "${CONF_PATH}"
 
 # FUNCTIONS
-
 function log {
   if [ "${SHOW_ERRORS_ONLY}" != true ] ; then
     echo "${1}"
@@ -125,34 +151,49 @@ function doBackup {
   duration=$SECONDS
   log "-> Finished after $(($duration / 60)) minutes."
 }
+
+function showHelp {
+  echo "oc-backup v${OCB_VERSION}"
+  echo "usage: ./oc_backup [options]"
+  echo ""
+  echo "options:"
+  echo "  -c|--conf"
+  echo "    path to oc_backup.conf file. Use absolute path for use in cronjob."
+  echo "  -h|--help"
+  echo "    show help."
+}
 # FUNCTIONS END
 
-log "Start oc-backup v1.0.0..."
+if [ "${show_help}" = false ] ; then
+  log "Start oc-backup v${OCB_VERSION}..."
 
-check_available_commands
-check_config
+  check_available_commands
+  check_config
 
-if [ "${cmd_zip_exists}" = true ] && [ "${cmd_sqldump_exists}" = true ] ; then
+  if [ "${cmd_zip_exists}" = true ] && [ "${cmd_sqldump_exists}" = true ] ; then
 
-  if [ "${is_config_valid}" = true ] ; then
-    doBackup
+    if [ "${is_config_valid}" = true ] ; then
+      doBackup
+    else
+      echo "OC Backup Error: Invalid config file. Missing constants: ${missing_constants}."
+    fi
   else
-    echo "OC Backup Error: Invalid config file. Missing constants: ${missing_constants}."
-  fi
-else
-  output="OC Backup Error: can not start backup, because of missing commands ("
+    output="OC Backup Error: can not start backup, because of missing commands ("
 
-  if [ "${cmd_zip_exists}" != true ] ; then
-    output="${output}zip"
-  fi
-
-  if [ "${cmd_sqldump_exists}" != true ] ; then
     if [ "${cmd_zip_exists}" != true ] ; then
-      output="${output}, "
+      output="${output}zip"
     fi
 
-    output="${output}sqldump"
-  fi
+    if [ "${cmd_sqldump_exists}" != true ] ; then
+      if [ "${cmd_zip_exists}" != true ] ; then
+        output="${output}, "
+      fi
 
-  echo "${output})."
+      output="${output}sqldump"
+    fi
+
+    echo "${output})."
+  fi
+else
+  showHelp
 fi
