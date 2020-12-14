@@ -5,11 +5,14 @@
 This Script alllows to create a backup of the whole owncloud installation and its SQL Database. You can run this script
 on your linux server where your owncloud installation is installed. In my case this scripts saves me a lot of time: During the backup my owncloud installation is unavailable for just 2 hours instead of days (I'm using encryption and I have a lot of small files to download). Please read the [Requirements](https://github.com/julianpoemp/oc-backup#requirements) before using this script.
 
+**Some statistics**: My owncloud folder (data + owncloud installation) has a size of 112 GB and contains 492733 files (incl. encryption keys). The size of the backup is only 75.5 GB. My owncloud installation was in maintenance mode for just 77 minutes. After that I downloaded the files with 20 MB/s.
+
 ## Features:
 
-- Backup of owncloud installation to 1 GB zip parts => better download speed.
+- Backup of owncloud installation to 1 GB zip parts => smaller backup size, bigger parts to download => better download speed.
 - Backup of owncloud SQL database next to the data backup
 - Automatically enable maintenance mode while backup
+- You can run it automatically with cronjob
 
 ## Why?
 
@@ -17,16 +20,13 @@ An owncloud installation can contain a lot of small files, especially if you are
 make a remote backup via FTPS/SFTP your download-speed will be low because your FTP-Client tries to download those many, small
 files. It's better to download bigger files, e.g. of size 1GB.
 
-## One example scenario
+## How does it work?
 
-For example you could create a cronjob that creates a backup every day at 3 a.m while you are sleeping. After that you
-can download the backup whenever you wish to do - with the full download speed, because your FTP-client does not have to
-download a lot of small files.
-
+It's just a shell script. It enables the maintenance mode, makes a backup of the SQL database, a backup of the data directory and a backup of the owncloud installation directory. After it has finsihed the backup it disables the maintenance mode automatically.
 
 ## Requirements
 
-1. You need enough disk space on your server (min. twice the size of your owncloud directory).
+1. You need enough disk space on the destination of the backup (min. the size of your owncloud directory).
 2. Make sure that your webserver's operating system is Linux.
 3. You need SSH access to the webserver where owncloud is installed in order to run this script. [What if I do not have SSH access?](#what-if-i-do-not-have-access-to-my-webserver)
 4. Make sure that the commands `zip` and `mysqldump` exist.
