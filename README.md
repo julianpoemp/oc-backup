@@ -72,3 +72,15 @@ In that case there are two options:
 5. After the download has finished disable maintenance mode.
 
 As an alternative to a standard FTP-Client you could use my [webspace-backup](https://github.com/julianpoemp/webspace-backup) application.
+
+## How to run it automatically using cronjob
+
+1. On your server call `crontab -e`
+2. Add a line, something like that ````00 4 * * * <absolute path to oc_backup.sh &> /dev/null````
+3. Save it.
+
+Example:
+````
+# run it every day at 4 a.m.
+00 4 * * * /home/julian/oc_backup.sh -c /home/julian/somefolder/oc_backup.cfg
+````
