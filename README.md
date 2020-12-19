@@ -1,7 +1,5 @@
 # Owncloud Backup Script
 
-**! IN DEVELOPMENT, DO NOT USE IT UNTIL TESTED !**
-
 This script alllows to create a backup of the whole owncloud installation and its SQL Database. You can run this script
 on your linux server where your owncloud is installed. In my case this scripts saves me a lot of time: During the backup my owncloud installation is unavailable for just 2 hours instead of days (I'm using encryption and I have a lot of small files to download). Please read the [Requirements](https://github.com/julianpoemp/oc-backup#requirements) before using this script.
 
@@ -47,7 +45,7 @@ OC_DB_NAME=owncloud
 OC_DB_USER=user
 OC_DB_PASSWORD=password
 BACKUP_PATH=/path/to/backup
-SHOW_ERRORS_ONLY=false
+CREATE_LOGFILE=true
 ````
 
 ## Tested on production servers
@@ -82,5 +80,5 @@ As an alternative to a standard FTP-Client you could use my [webspace-backup](ht
 Example:
 ````
 # run it every day at 4 a.m.
-00 4 * * * /home/julian/oc_backup.sh -c /home/julian/somefolder/oc_backup.cfg
+00 4 * * * /home/julian/oc_backup.sh -c /home/julian/somefolder/oc_backup.cfg &> /dev/null
 ````
