@@ -2,8 +2,8 @@
 
 **! IN DEVELOPMENT, DO NOT USE IT UNTIL TESTED !**
 
-This Script alllows to create a backup of the whole owncloud installation and its SQL Database. You can run this script
-on your linux server where your owncloud installation is installed. In my case this scripts saves me a lot of time: During the backup my owncloud installation is unavailable for just 2 hours instead of days (I'm using encryption and I have a lot of small files to download). Please read the [Requirements](https://github.com/julianpoemp/oc-backup#requirements) before using this script.
+This script alllows to create a backup of the whole owncloud installation and its SQL Database. You can run this script
+on your linux server where your owncloud is installed. In my case this scripts saves me a lot of time: During the backup my owncloud installation is unavailable for just 2 hours instead of days (I'm using encryption and I have a lot of small files to download). Please read the [Requirements](https://github.com/julianpoemp/oc-backup#requirements) before using this script.
 
 **Some statistics**: My owncloud folder (data + owncloud installation) has a size of 112 GB and contains 492733 files (incl. encryption keys). The size of the backup is only 75.5 GB. My owncloud installation was in maintenance mode for just 77 minutes. After that I downloaded the files with 20 MB/s.
 
@@ -72,3 +72,15 @@ In that case there are two options:
 5. After the download has finished disable maintenance mode.
 
 As an alternative to a standard FTP-Client you could use my [webspace-backup](https://github.com/julianpoemp/webspace-backup) application.
+
+## How to run it automatically using cronjob
+
+1. On your server call `crontab -e`
+2. Add a line, something like that ````00 4 * * * <absolute path to oc_backup.sh &> /dev/null````
+3. Save it.
+
+Example:
+````
+# run it every day at 4 a.m.
+00 4 * * * /home/julian/oc_backup.sh -c /home/julian/somefolder/oc_backup.cfg
+````
