@@ -16,20 +16,20 @@ on your linux server where your owncloud is installed. In my case this scripts s
 
 An owncloud installation can contain a lot of small files, especially if you are using server-side encryption. If you try to
 make a remote backup via FTPS/SFTP your download-speed will be low because your FTP-Client tries to download those many, small
-files. It's better to download bigger files, e.g. of size 1GB.
+files. It's better to download bigger files, e.g. of size 1GB. Further more your owncloud is unavailable just for the time the backup files are created, not for the time you need to download the files.
 
 ## How does it work?
 
-It's just a shell script. It enables the maintenance mode, makes a backup of the SQL database, a backup of the data directory and a backup of the owncloud installation directory. After it has finsihed the backup it disables the maintenance mode automatically.
+It's just a shell script. It enables the maintenance mode, makes a backup of the SQL database, a backup of the data directory and a backup of the owncloud installation directory. After it has finished the backup it disables the maintenance mode automatically.
 
 ## Requirements
 
 1. You need enough disk space on the destination of the backup (min. the size of your owncloud directory).
 2. Make sure that your webserver's operating system is Linux.
-3. You need SSH access to the webserver where owncloud is installed in order to run this script. [What if I do not have SSH access?](#what-if-i-do-not-have-access-to-my-webserver)
+3. You need Terminal access (SSH or local) to the webserver where owncloud is installed in order to run this script. [What if I do not have SSH access?](#what-if-i-do-not-have-access-to-my-webserver)
 4. Make sure that the commands `zip` and `mysqldump` exist.
 
-## How to make an owncloud backup
+## Installaation & Run
 
 1. Upload the oc_backup.sh script and the oc_backup.cfg to your webserver, next to the owncloud installation folder.
 2. Change the oc_backup.cfg file with the data of your owncloud installation. See [config example](#example-config-file).
@@ -47,6 +47,29 @@ OC_DB_PASSWORD=password
 BACKUP_PATH=/path/to/backup
 CREATE_LOGFILE=true
 ````
+
+## Command line arguments
+
+<table>
+  <tbody>
+    <tr>
+      <td>
+        -c
+      </td>
+      <td>
+        Absolute path to the config file for oc-backup.
+      </td>
+    </tr>
+     <tr>
+      <td>
+        -h
+      </td>
+      <td>
+        Show help text.
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 ## Tested on production servers
 
