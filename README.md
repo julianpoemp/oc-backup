@@ -1,20 +1,20 @@
-# Owncloud Backup Script
+# Owncloud/Nexcloud Backup Script
 
-This script alllows to create a backup of the whole owncloud installation and its SQL Database. You can run this script
-on your linux server where your owncloud is installed. In my case this scripts saves me a lot of time: During the backup my owncloud installation is unavailable for just 2 hours instead of days (I'm using encryption and I have a lot of small files to download). Please read the [Requirements](https://github.com/julianpoemp/oc-backup#requirements) before using this script.
+This script alllows to backup your owncloud (or nextcloud) installation with data and its SQL Database. You can run this script
+on your linux server where your cloud is installed. In my case this scripts saves me a lot of time: During the backup my owncloud installation is unavailable for just 2 hours instead of days (I'm using encryption and I have a lot of small files to download). Please read the [Requirements](https://github.com/julianpoemp/oc-backup#requirements) before using this script.
 
 **Some statistics**: My owncloud folder (data + owncloud installation) has a size of 112 GB and contains 492733 files (incl. encryption keys). The size of the backup is only 75.5 GB. My owncloud installation was in maintenance mode for just 77 minutes. After that I downloaded the files with 20 MB/s.
 
 ## Features:
 
-- Backup of owncloud installation to 1 GB zip parts => smaller backup size, bigger parts to download => better download speed.
-- Backup of owncloud SQL database next to the data backup
+- Backup of owncloud/nextcloud installation to 1 GB zip parts => smaller backup size, bigger parts to download => better download speed.
+- Backup of owncloud/nextcloud SQL database next to the data backup
 - Automatically enable maintenance mode while backup
 - You can run it automatically with cronjob
 
 ## Why?
 
-An owncloud installation can contain a lot of small files, especially if you are using server-side encryption. If you try to
+An owncloud/nextcloud installation can contain a lot of small files, especially if you are using server-side encryption. If you try to
 make a remote backup via FTPS/SFTP your download-speed will be low because your FTP-Client tries to download those many, small
 files. It's better to download bigger files, e.g. of size 1GB. Further more your owncloud is unavailable just for the time the backup files are created, not for the time you need to download the files.
 
@@ -24,9 +24,9 @@ It's just a shell script. It enables the maintenance mode, makes a backup of the
 
 ## Requirements
 
-1. You need enough disk space on the destination of the backup (min. the size of your owncloud directory).
+1. You need enough disk space on the destination of the backup (min. the size of your owncloud/nextcloud directory).
 2. Make sure that your webserver's operating system is Linux.
-3. You need Terminal access (SSH or local) to the webserver where owncloud is installed in order to run this script. [What if I do not have SSH access?](#what-if-i-do-not-have-access-to-my-webserver)
+3. You need terminal access (SSH or local) to the webserver where owncloud is installed in order to run this script. [What if I do not have SSH access?](#what-if-i-do-not-have-access-to-my-webserver)
 4. Make sure that the commands `zip` and `mysqldump` exist.
 
 ## Installaation & Run
@@ -39,6 +39,7 @@ It's just a shell script. It enables the maintenance mode, makes a backup of the
 ## Example config file
 Assuming your data directory and your owncloud directory are in the same folder called "myowncloud.com":
 ````
+OCB_TYPE="owncloud"
 OC_INSTALLATION_PATH=/path/to/myowncloud.com/owncloud
 OC_DATA_PATH=/path/to/myowncloud.com/data
 OC_DB_NAME=owncloud
