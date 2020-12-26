@@ -1,6 +1,6 @@
 #!/bin/zsh
 # Title: OC Backup Script
-# Description: Creates a backup of the whole owncloud installation incl. SQL database.
+# Description: Creates a backup of the whole owncloud/nextcloud installation incl. SQL database.
 # Author: Julian Poemp
 # Version: 1.0.0
 # LICENSE: MIT
@@ -18,6 +18,7 @@ OC_DB_USER=""
 OC_DB_PASSWORD=""
 BACKUP_DESTINATION=""
 CREATE_LOGFILE=true
+OCB_TYPE="owncloud"
 
 cmd_zip_exists=false
 cmd_sqldump_exists=false
@@ -26,7 +27,7 @@ is_config_valid=false
 show_help=false
 time_stamp=$(date "+%Y-%m-%d_%H-%M-%S")
 
-errors_found=false
+errors_found=0
 
 POSITIONAL=()
 while [[ $# -gt 0 ]]; do
@@ -91,12 +92,12 @@ check_available_commands() {
 }
 
 check_config() {
-  if [ "${OC_INSTALLATION_PATH}" = "" ]; then
-    missing_constants="OC_INSTALLATION_PATH, "
+  if ! [[ "${OCB_TYPE}" = "owncloud" ]] && ! [[ "${OCB_TYPE}" = "nextcloud" ]]; then
+    OCB_TYPE="owncloud"
   fi
 
-  if [ "${OC_DATA_PATH}" = "" ]; then
-    missing_constants="${missing_constants}OC_DATA_PATH, "
+  if [ "${OC_INSTALLATION_PATH}" = "" ]; then
+    missing_constants="OC_INSTALLATION_PATH, "
   fi
 
   if [ "${OC_DB_NAME}" = "" ]; then
@@ -135,9 +136,9 @@ disable_maintenance_mode() {
 }
 
 create_zip_backup() {
-  log "-> Create zip archive of owncloud files..."
+  log "-> Create zip archive of ${OCB_TYPE} files..."
 
-  stdout=$(zip -r -s 1000m "${BACKUP_DESTINATION}/${time_stamp}_owncloud.zip" "${OC_INSTALLATION_PATH}" "${OC_DATA_PATH}" 2>stderr.txt)
+  stdout=$(zip -r -s 1000m "${BACKUP_DESTINATION}/${time_stamp}_${OCB_TYPE}.zip" "${OC_INSTALLATION_PATH}" "${OC_DATA_PATH}" 2>stderr.txt)
   stderr=$(cat stderr.txt)
 
   echo "${stdout}" >> "${BACKUP_DESTINATION}/${time_stamp}_log.txt"
@@ -154,22 +155,25 @@ create_zip_backup() {
 create_sql_backup() {
   log "-> Create database backup..."
 
-  stdout=$(mysqldump -u "${OC_DB_USER}" -p"${OC_DB_PASSWORD}" "${OC_DB_NAME}" >"${BACKUP_DESTINATION}/${time_stamp}_owncloud.sql" 2>stderr.txt)
+  stdout=$(mysqldump -u "${OC_DB_USER}" -p"${OC_DB_PASSWORD}" "${OC_DB_NAME}" >"${BACKUP_DESTINATION}/${time_stamp}_${OCB_TYPE}.sql" 2> stderr.txt)
   stderr=$(cat stderr.txt)
 
   log "${stdout}"
   log "${stderr}"
 
   if [ "${#stderr}" -gt 0 ]; then
-    log "Error: SQL backup failed."
-    errors_found=$((errors_found + 1))
+    if ! [[ "${stderr}" =~ ^mysqldump:[[:space:]]\[Warning\] ]]; then
+      log "Error: SQL backup failed."
+      log "_${stderr}_"
+      errors_found=$((errors_found + 1))
+    fi
   fi
 
-  echo "" >stderr.txt
+  echo "" > stderr.txt
 }
 
 backup_config_file() {
-  log "-> Backup owncloud configuration file..."
+  log "-> Backup ${OCB_TYPE} configuration file..."
 
   stdout=$(cp "${configPath}" "${configPath}.back" 2>stderr.txt)
   stderr=$(cat stderr.txt)
@@ -193,7 +197,7 @@ doBackup() {
   configPath="${OC_INSTALLATION_PATH}/config/config.php"
   backup_config_file
 
-  log "-> Read owncloud configuration file..."
+  log "-> Read ${OCB_TYPE} configuration file..."
   configFile=$(<"${configPath}")
 
   enable_maintenance_mode
