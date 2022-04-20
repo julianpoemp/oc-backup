@@ -2,7 +2,7 @@
 # Title: OC Backup Script
 # Description: Creates a backup of the whole owncloud/nextcloud installation incl. SQL database.
 # Author: Julian Poemp
-# Version: 1.0.0
+# Version: 1.0.1
 # LICENSE: MIT
 # Check for updates: https://github.com/julianpoemp/oc-backup
 
@@ -125,13 +125,13 @@ check_config() {
 
 enable_maintenance_mode() {
   log "-> Enable maintenance mode..."
-  configFile="${configFile//\'maintenance\' => false/'maintenance' => true}"
+  configFile="${configFile//\'maintenance\' => false/\'maintenance\' => true}"
   echo "${configFile}" > "${configPath}"
 }
 
 disable_maintenance_mode() {
   log "-> Disbale maintenance mode..."
-  configFile="${configFile//\'maintenance\' => true/'maintenance' => false}"
+  configFile="${configFile//\'maintenance\' => true/\'maintenance\' => false}"
   echo "${configFile}" > "${configPath}"
 }
 
