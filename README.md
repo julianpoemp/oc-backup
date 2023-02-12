@@ -10,7 +10,8 @@ on your linux server where your cloud is installed. In my case this scripts save
 - Backup of owncloud/nextcloud installation to 1 GB zip parts => smaller backup size, bigger parts to download => better download speed.
 - Backup of owncloud/nextcloud SQL database next to the data backup
 - Automatically enable maintenance mode while backup
-- You can run it automatically with cronjob
+- Automation via cronjob supported
+- Download and remove completely created parts of the backup while it's running to save time and disc space
 
 ## Why?
 
@@ -24,12 +25,12 @@ It's just a shell script. It enables the maintenance mode, makes a backup of the
 
 ## Requirements
 
-1. You need enough disk space on the destination of the backup (min. the size of your owncloud/nextcloud directory).
-2. Make sure that your webserver's operating system is Linux.
+1. Make sure that your webserver's operating system is Linux.
+2. You need enough disk space on the destination of the backup (max. the size of your owncloud/nextcloud directory). **Tip: You can download parts of the backup while it's running (only full created parts, not the temporary ones!). As soon as the download finished you can remove the downloaded parts.**
 3. You need terminal access (SSH or local) to the webserver where owncloud is installed in order to run this script. [What if I do not have SSH access?](#what-if-i-do-not-have-access-to-my-webserver)
 4. Make sure that the commands `zip` and `mysqldump` exist.
 
-## Installaation & Run
+## Installation & Run
 
 1. Upload the oc_backup.sh script and the oc_backup.cfg to your webserver, next to the owncloud installation folder.
 2. Change the oc_backup.cfg file with the data of your owncloud installation. See [config example](#example-config-file).
