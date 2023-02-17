@@ -2,11 +2,11 @@
 # Title: OC Backup Script
 # Description: Creates a backup of the whole owncloud/nextcloud installation incl. SQL database.
 # Author: Julian Poemp
-# Version: 1.0.2
+# Version: 1.0.3
 # LICENSE: MIT
 # Check for updates: https://github.com/julianpoemp/oc-backup
 
-OCB_VERSION="1.0.2"
+OCB_VERSION="1.0.3"
 SECONDS=0
 CONF_PATH="./oc_backup.cfg"
 
