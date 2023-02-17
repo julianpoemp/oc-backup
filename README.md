@@ -47,13 +47,13 @@ maintenance mode automatically.
 
 ## Installation & Run
 
-1. Clone this repository to a directory on your server or download both oc_backup.sh and oc_backup.cfg manually.
+1. Clone this repository to a directory on your server or upload both oc_backup.sh and oc_backup_sample.cfg manually.
 
 ````shell
 git clone https://github.com/julianpoemp/oc-backup.git
 ````
 
-2. Upload both files to your webserver. Rename `oc_backup_sample.cfg` to `oc_backup.cfg`
+2. Duplicate `oc_backup_sample.cfg` and rename it to `oc_backup.cfg`
 2. Change the oc_backup.cfg file with the data of your owncloud installation.
    See [config example](#example-config-file).
 3. To start the backup run `sh ./oc_backup.sh`. While it is running your owncloud is in maintenance mode.
