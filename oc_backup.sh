@@ -165,11 +165,13 @@ create_sql_backup() {
   log "${stdout}"
   log "${stderr}"
 
+  regex="^mysqldump:\s\[Warning]"
   if [ "${#stderr}" -gt 0 ]; then
-    if ! [[ "${stderr}" =~ ^mysqldump:[[:space:]]\[Warning\] ]]; then
-      log "Error: SQL backup failed."
-      log "_${stderr}_"
-      errors_found=$((errors_found + 1))
+    if ! echo "${stderr}" | grep -Pq "$regex"
+      then
+        log "Error: SQL backup failed."
+        log "_${stderr}_"
+        errors_found=$((errors_found + 1))
     fi
   fi
 
