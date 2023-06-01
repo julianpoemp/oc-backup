@@ -2,11 +2,11 @@
 # Title: OC Backup Script
 # Description: Creates a backup of the whole owncloud/nextcloud installation incl. SQL database.
 # Author: Julian Poemp
-# Version: 1.0.3
+# Version: 1.0.4
 # LICENSE: MIT
 # Check for updates: https://github.com/julianpoemp/oc-backup
 
-OCB_VERSION="1.0.3"
+OCB_VERSION="1.0.4"
 SECONDS=0
 CONF_PATH="./oc_backup.cfg"
 
@@ -201,15 +201,18 @@ get_current_timestamp() {
 
 doBackup() {
   configPath="${OC_INSTALLATION_PATH}/config/config.php"
-  backup_config_file
+
+  echo "* ${time_stamp} | -> Create backup folder"
+  mkdir "${BACKUP_DESTINATION}" &>/dev/null
+  mkdir "${BACKUP_DESTINATION}/${time_stamp}" &>/dev/null
+  BACKUP_DESTINATION="${BACKUP_DESTINATION}/${time_stamp}"
 
   log "-> Read ${OCB_TYPE} configuration file..."
   configFile=$(<"${configPath}")
 
-  enable_maintenance_mode
+  backup_config_file
 
-  log "-> Create backup folder"
-  mkdir "${BACKUP_DESTINATION}" &>/dev/null
+  enable_maintenance_mode
 
   create_sql_backup
   create_zip_backup
@@ -237,7 +240,7 @@ showHelp() {
 # FUNCTIONS END
 
 if [ "${show_help}" = false ]; then
-  log "Start oc-backup v${OCB_VERSION}..."
+  echo "Start oc-backup v${OCB_VERSION}..."
 
   check_available_commands
   check_config
