@@ -57,7 +57,7 @@ git clone https://github.com/julianpoemp/oc-backup.git
 2. Change the oc_backup.cfg file with the data of your owncloud installation.
    See [config example](#example-config-file).
 3. To start the backup run `sh ./oc_backup.sh`. While it is running your owncloud is in maintenance mode.
-4. After the backup you can download the backup to your computer.
+4. As soon as the backup finished creating a zip part you can download and delete it afterwards - while the backup is running. Makue sure that the zip part was really created completely (z<Number> file extension and a size of 1GB). That way you can save time and disk space on your server.
 
 ## Update
 
